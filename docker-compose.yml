@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+  apache:
+    image: 'bitnami/apache:latest'
+    ports:
+      - '80:8080'
+      - '443:8443'
+    volumes:
+      - .:/app
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - node.name=elasticsearch
+      - cluster.name=es-docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.host=0.0.0.0
+      - http.port=9200
+      - "http.cors.allow-origin=http://localhost"
+      - "http.cors.enabled=true"
+      - "http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
+      - "http.cors.allow-credentials=true"
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - elastic
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:7.7.0
+    container_name: kibana
+    environment:
+      SERVER_NAME: kibana-server
+      ELASTICSEARCH_URL: http://elasticsearch:9300
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+
+volumes:
+  data01:
+    driver: local
+
+
+networks:
+  elastic:
+    driver: bridge

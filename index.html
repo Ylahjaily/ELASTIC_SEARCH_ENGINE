@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+</head>
+<body>
+
+<div class="home">
+    <h5>Elastic page d'accueil</h5>
+    <p> Le nom du cluster:</p>
+    <p id="cluster_name"></p>
+    <p> La version: </p>
+    <p id="cluster_version"></p>
+</div>
+
+<link rel="stylesheet" href="style.css">
+<script type="application/javascript">
+    fetch('http://localhost:9200')
+        .then(async (response) => {
+            let data = await response.json()
+            document.getElementById('cluster_name').innerText = data.cluster_name
+            document.getElementById('cluster_version').innerText = data.version.number
+        })
+</script>
+</body>
+</html>
+

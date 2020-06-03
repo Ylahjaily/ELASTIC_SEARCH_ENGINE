@@ -1,0 +1,14 @@
+body, html{
+  text-align: center;
+  font-family: "Times New Roman";
+  font-size: 25px;
+}
+
+#cluster_name{
+  font-weight: bold;
+}
+
+#cluster_version{
+  font-weight: bold;
+}
+
