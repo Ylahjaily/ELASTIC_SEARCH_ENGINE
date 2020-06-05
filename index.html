@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Accueil</title>
+    <title>ELASTIC SEARCH ENGINE</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -14,15 +15,20 @@
     <p id="cluster_version"></p>
 </div>
 
-<link rel="stylesheet" href="style.css">
-<script type="application/javascript">
-    fetch('http://localhost:9200')
-        .then(async (response) => {
-            let data = await response.json()
-            document.getElementById('cluster_name').innerText = data.cluster_name
-            document.getElementById('cluster_version').innerText = data.version.number
-        })
-</script>
+<div>
+    
+        <label for="acteur">Acteur :</label><br>
+        <input type="text" id="acteur" name="acteur"><br>
+        <label for="theme">Theme:</label><br>
+        <input type="text" id="theme" name="theme">
+        <button id="submit">RECHERCHER</button>
+      
+</div>
+<div id = "result">
+
+</div>
+
+<script type="application/javascript" src="index.js"></script>
 </body>
 </html>
 
