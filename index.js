@@ -1,40 +1,19 @@
 
 const baseUrl = 'http://localhost:9200'
 
-fetch(baseUrl)
-.then(async (response) => {
-    let data = await response.json()
-    document.getElementById('cluster_name').innerText = data.cluster_name
-    document.getElementById('cluster_version').innerText = data.version.number
-})
-
 const actor = document.querySelector('#acteur')
 const theme = document.querySelector('#theme')
 const submit = document.querySelector('#submit')
 const result = document.querySelector('#result')
 
-let query = 
-
-{"query":{
-    "bool": {
-        "should": [
-            { "match": { "fields.actors": "Harrison Ford" }},
-            { "match_phrase": { "_all": "stars" }}
-        ]
-}}}
-
 const research = () => {
+    resetFilmDisplayed()
     const actorSearched = actor.value
     const themeSearched = theme.value
-
-
-    fetchFilms()
+    fetchFilms(actorSearched,themeSearched)
 }
 
-
-
-let film = {}
-
+// constructor objet Film avec les champs title, year et plot
 function Film(title,plot,year){
     this.title = title
     this.plot = plot
@@ -42,21 +21,26 @@ function Film(title,plot,year){
 }
 
 
-let filmSorted = []
-
 const sortFilms = (title,plot,year) => {
-    // créer un objet Film avec les champs
+    let filmSorted = []
+    // Créer un nouvel objet Film avec les champs title, year et plot
      let film = new Film(title,plot,year)
-    
-    // pousse le Film dans l'array 
+    // Pousse le Film dans l'array 
     filmSorted.push(film)
+    // Affiche les films
+    displayFilms(filmSorted)
+    filmSorted.length = 0
 }
 
-const displayFilms = () => {
+const resetFilmDisplayed = () => {
+    result.innerHTML = ''
+}
+
+const displayFilms = (filmSorted) => {
     
     filmSorted.forEach(film => {
-        console.log(film.plot)
         let div = document.createElement("div")
+        div.className = "result-item"
         result.appendChild(div)
         p = document.createElement("p")
         p.textContent = film.title
@@ -70,19 +54,31 @@ const displayFilms = () => {
     })
 }
 
-//console.log(query.query.match.fields.title)
+const fetchFilms = (actor, theme) => {
 
+    const query = 
+        {
+            "query":{
+                "bool": {
+                    
+                    "should": [
+                        { "match_phrase": { "_all": `${theme}` }}
+                    ],
+                    "must": [
+                        { "match": { "fields.actors": `${actor}`}}
+                    ]
 
-const fetchFilms = () => {
+                }
+            }
+        }
+
     let data = JSON.stringify(query)
     fetch(baseUrl + `/movies2/movie/_search?source_content_type=application/json&source=+${data}`)
     .then(response => response.json())
     .then(data => data.hits.hits.map(data =>
         sortFilms(data._source.fields.title,data._source.fields.plot,data._source.fields.year)
     ))
-    .then(displayFilms())
-   console.log(filmSorted)
-   //displayFilms()
+   
 }
 
 submit.addEventListener('click',research,false)

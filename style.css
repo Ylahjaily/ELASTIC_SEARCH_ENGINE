@@ -12,3 +12,13 @@ body, html{
   font-weight: bold;
 }
 
+.research-form{
+  margin-bottom:50px;
+  display: flex;
+}
+
+.result-item{
+  border: 1px solid black;
+  border-radius: 15px;
+  margin-bottom: 50px;
+}
