@@ -54,31 +54,31 @@ const displayFilms = (filmSorted) => {
     })
 }
 
-const fetchFilms = (actor, theme) => {
+const fetchFilms = (actor, theme= null) => {
 
-    const query = 
+    let query;
+       query = 
         {
+            "size": 100,
             "query":{
                 "bool": {
-                    
-                    "should": [
-                        { "match_phrase": { "_all": `${theme}` }}
-                    ],
                     "must": [
                         { "match": { "fields.actors": `${actor}`}}
+                    ],
+                    "should": [
+                        { "match": { "fields.plot": `${theme}` }}
                     ]
-
                 }
             }
         }
-
+    
     let data = JSON.stringify(query)
     fetch(baseUrl + `/movies2/movie/_search?source_content_type=application/json&source=+${data}`)
     .then(response => response.json())
     .then(data => data.hits.hits.map(data =>
         sortFilms(data._source.fields.title,data._source.fields.plot,data._source.fields.year)
     ))
-   
+    
 }
 
 submit.addEventListener('click',research,false)
